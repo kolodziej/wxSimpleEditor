@@ -2,6 +2,7 @@
 #define EDITORFRAME_HPP
 #include "wx/wx.h"
 #include "wx/notebook.h"
+#include "File.hpp"
 
 class EditorFrame : public wxFrame
 {
@@ -16,6 +17,9 @@ public:
 	};
 	EditorFrame();
 
+	File * GetSelectedFile() const;
+	File * GetFile(size_t) const;
+
 	// events
 	void OnNew(wxCommandEvent &);
 	void OnOpen(wxCommandEvent &);
@@ -26,7 +30,15 @@ public:
 	void OnCloseAll(wxCommandEvent &);
 	void OnExit(wxCommandEvent &);
 
+	void OnUndo(wxCommandEvent &);
+	void OnRedo(wxCommandEvent &);
+	void OnCut(wxCommandEvent &);
+	void OnCopy(wxCommandEvent &);
+	void OnPaste(wxCommandEvent &);
+
 	void OnAbout(wxCommandEvent &);
+
+	void OnSearchFile(wxCommandEvent &);
 
 	void OnModify(wxCommandEvent &);
 	void OnClose(wxCloseEvent &);

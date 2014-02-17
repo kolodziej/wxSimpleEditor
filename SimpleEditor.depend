@@ -1460,20 +1460,21 @@
 1348040733 /usr/include/wx-2.8/wx/gtk/filedlg.h
 	"wx/generic/filedlgg.h"
 
-1392410473 /home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/headers/File.hpp
+1392416799 /home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/headers/File.hpp
 	"wx/wx.h"
 	"wx/notebook.h"
 	<vector>
 
-1392415190 /home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/headers/EditorFrame.hpp
+1392496583 /home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/headers/EditorFrame.hpp
 	"wx/wx.h"
 	"wx/notebook.h"
+	"File.hpp"
 
 1392210217 source:/home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/main.cpp
 	"wx/wx.h"
 	"headers/Editor.hpp"
 
-1392414834 source:/home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/src/EditorFrame.cpp
+1392490167 source:/home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/src/EditorFrame.cpp
 	"../headers/EditorFrame.hpp"
 	"../headers/File.hpp"
 	<vector>
@@ -1509,7 +1510,7 @@
 1348040733 /usr/include/wx-2.8/wx/gtk/notebook.h
 	"wx/list.h"
 
-1392413953 source:/home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/src/File.cpp
+1392416789 source:/home/kacper/programowanie/CPP/wxWidgets/SimpleEditor/src/File.cpp
 	"../headers/File.hpp"
 	"../headers/EditorFrame.hpp"
 	"wx/wx.h"

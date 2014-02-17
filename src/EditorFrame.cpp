@@ -19,8 +19,8 @@ void EditorFrame::InitMenuBar()
 
 	// menu file
 	wxMenu * menuFile = new wxMenu();
-	menuFile->Append(wxID_NEW, wxT("&Nowy plik\tAlt+N"));
-	menuFile->Append(wxID_OPEN, wxT("&Otwórz plik\tAlt+O"));
+	menuFile->Append(wxID_NEW, wxT("Nowy plik\tCtrl+N"));
+	menuFile->Append(wxID_OPEN, wxT("Otwórz plik\tCtrl+O"));
 	menuFile->Append(wxID_SAVE, wxT("Zapisz plik"));
 	menuFile->Append(wxID_SAVEAS, wxT("Zapisz jako"));
 	menuFile->Append(SAVEALL, wxT("Zapisz wszystkie pliki\tCtrl+Shift+S"));
@@ -29,10 +29,20 @@ void EditorFrame::InitMenuBar()
 	menuFile->Append(wxID_CLOSE_ALL, wxT("Zamknij wszystkie pliki"));
 	menuFile->AppendSeparator();
 	menuFile->Append(wxID_EXIT, wxT("Zakończ\tCtrl+Q"));
-
+	// menu edit
 	wxMenu * menuEdit = new wxMenu();
+	menuEdit->Append(wxID_UNDO, wxT("Cofnij\tCtrl+Z"));
+	menuEdit->Append(wxID_REDO, wxT("Powtórz\tCtrl+Shift+Z"));
+	menuEdit->AppendSeparator();
+	menuEdit->Append(wxID_CUT, wxT("Wytnij\tCtrl+X"));
+	menuEdit->Append(wxID_COPY, wxT("Kopiuj\tCtrl+C"));
+	menuEdit->Append(wxID_PASTE, wxT("Wklej\tCtrl+P"));
 	wxMenu * menuView = new wxMenu();
 	wxMenu * menuSettings = new wxMenu();
+
+	// menu window
+	wxMenu * menuWindow = new wxMenu();
+	//menuWindow->Append()
 
 	// menu help
 	wxMenu * menuHelp = new wxMenu();
@@ -43,6 +53,7 @@ void EditorFrame::InitMenuBar()
 	menuBar->Append(menuEdit, wxT("&Edycja"));
 	menuBar->Append(menuView, wxT("&Widok"));
 	menuBar->Append(menuSettings, wxT("&Ustawienia"));
+	menuBar->Append(menuWindow, wxT("&Okno"));
 	menuBar->Append(menuHelp, wxT("&Pomoc"));
 
 	SetMenuBar(menuBar);
@@ -77,6 +88,34 @@ void EditorFrame::InitEditor(const wxString &path, const wxString &fname)
 		newfile = new File(path, fname);
 		notebook->SetPageText(newfile->GetId(), fname);
 	}
+}
+
+File * EditorFrame::GetSelectedFile() const
+{
+	size_t selection = notebook->GetSelection();
+	if (selection != wxNOT_FOUND)
+		return File::files[selection];
+
+	return NULL;
+}
+
+File * EditorFrame::GetFile(size_t id) const
+{
+	vector<File*>::iterator
+		it,
+		begin = File::files.begin(),
+		end = File::files.end();
+
+	while (begin < end)
+	{
+		it = begin + File::files.size() / 2;
+		if ((*it)->GetId() < id)
+			begin = it;
+		else
+			end = it;
+	}
+
+	return *it;
 }
 
 // events
@@ -132,13 +171,65 @@ void EditorFrame::OnSaveAll(wxCommandEvent &event)
 void EditorFrame::OnCloseFile(wxCommandEvent &event)
 {
 	size_t selection = notebook->GetSelection();
-	if (File::files[selection]->Is)
+
+	if (selection == wxNOT_FOUND)
+		return;
+
+	if (File::files[selection]->IsModified())
+	{
+		OnSave(event);
+	}
 	notebook->DeletePage(selection);
 }
 
 void EditorFrame::OnCloseAll(wxCommandEvent &event)
 {
 
+}
+
+void EditorFrame::OnUndo(wxCommandEvent &event)
+{
+	File * file = GetSelectedFile();
+	if (file == NULL)
+		return;
+
+	file->GetTextCtrl()->Undo();
+}
+
+void EditorFrame::OnRedo(wxCommandEvent &event)
+{
+	File * file = GetSelectedFile();
+	if (file == NULL)
+		return;
+
+	file->GetTextCtrl()->Redo();
+}
+
+void EditorFrame::OnCut(wxCommandEvent &event)
+{
+	File * file = GetSelectedFile();
+	if (file == NULL)
+		return;
+
+	file->GetTextCtrl()->Cut();
+}
+
+void EditorFrame::OnCopy(wxCommandEvent &event)
+{
+	File * file = GetSelectedFile();
+	if (file == NULL)
+		return;
+
+	file->GetTextCtrl()->Copy();
+}
+
+void EditorFrame::OnPaste(wxCommandEvent &event)
+{
+	File * file = GetSelectedFile();
+	if (file == NULL)
+		return;
+
+	file->GetTextCtrl()->Paste();
 }
 
 void EditorFrame::OnExit(wxCommandEvent &event)
@@ -149,6 +240,11 @@ void EditorFrame::OnExit(wxCommandEvent &event)
 void EditorFrame::OnAbout(wxCommandEvent &event)
 {
 	wxMessageBox(wxT("SimpleEditor"),wxT("O programie"));
+}
+
+void EditorFrame::OnSearchFile(wxCommandEvent &event)
+{
+
 }
 
 void EditorFrame::OnModify(wxCommandEvent &event)
@@ -186,6 +282,12 @@ BEGIN_EVENT_TABLE(EditorFrame, wxFrame)
 	EVT_MENU(SAVEALL, EditorFrame::OnSaveAll)
 	EVT_MENU(wxID_CLOSE, EditorFrame::OnCloseFile)
 	EVT_MENU(wxID_CLOSE_ALL, EditorFrame::OnCloseAll)
+
+	EVT_MENU(wxID_UNDO, EditorFrame::OnUndo)
+	EVT_MENU(wxID_REDO, EditorFrame::OnRedo)
+	EVT_MENU(wxID_CUT, EditorFrame::OnCut)
+	EVT_MENU(wxID_COPY, EditorFrame::OnCopy)
+	EVT_MENU(wxID_PASTE, EditorFrame::OnPaste)
 
 	EVT_MENU(wxID_ABOUT, EditorFrame::OnAbout)
 	EVT_MENU(wxID_EXIT, EditorFrame::OnExit)
